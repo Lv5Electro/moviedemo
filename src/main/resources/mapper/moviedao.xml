@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hniu.dao.MovieDao">
+    <resultMap id="movieActor" type="Movie">
+        <id property="mId" column="mId"></id>
+        <result property="mName" column="mName"></result>
+        <result property="mScreenDate" column="mScreenDate"></result>
+        <result property="mHot" column="mHot"></result>
+        <result property="mGrade" column="mGrade"></result>
+        <result property="mTime" column="mTime"></result>
+        <result property="mProfile" column="mProfile"></result>
+        <result property="mDirector" column="mDirector"></result>
+        <result property="mIsScreen" column="mIsScreen"></result>
+        <result property="mImage" column="mImage"></result>
+        <collection property="actors" resultMap="actorMovie"></collection>
+        <collection property="movieTypes" resultMap="movieTypeMovie"></collection>
+    </resultMap>
+
+    <resultMap id="actorMovie" type="Actor">
+        <id property="aId" column="aId"></id>
+        <result property="aName" column="aName"></result>
+    </resultMap>
+
+    <resultMap id="movieTypeMovie" type="MovieType">
+        <id property="tId" column="tId"></id>
+        <result property="tName" column="tName"></result>
+    </resultMap>
+
+    <select id="findAllMovie" resultType="Movie">
+        select * from movie
+    </select>
+    <select id="findMovieByIsScreen" resultMap="movieActor" parameterType="java.lang.Integer">
+        select m.*,a.*,t.* from movie m
+         join participation p on m.mid=p.mid
+          join actor a on a.aid=p.aid
+           join classification c on c.mid=m.mid
+            join movietype t on t.tid=c.tid
+             where misScreen=#{isScreen}
+    </select>
+
+    <select id="findIsScreenMovieCount" resultType="java.lang.Integer">
+        select count(*) from movie where misScreen=#{isScreen}
+    </select>
+</mapper>

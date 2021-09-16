@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hniu.dao.TicketDao">
+
+    <select id="findTicketByUIdMIdSId" resultType="Ticket">
+        select m.mid,m.mname,s.sid,tk.tkseat from user u
+            join ticket tk using(uid)
+                join studio s using(sid)
+                    join movie m using(mid)
+                        where u.uid=#{uId} and m.mid=#{mId} and s.sid=#{sId}
+    </select>
+
+    <select id="findTicketByUId" resultType="ShowTicketVO">
+        select tk.*,s.sid,m.mname from user u
+            join ticket tk using(uid)
+                join studio s using(sid)
+                    join movie m using(mid)
+                        where u.uid=#{uId}
+    </select>
+
+    <select id="findTicketByMIdSId" resultType="Ticket">
+        select m.mid,m.mname,s.sid,tk.tkseat from ticket tk
+            join studio s using(sid)
+                join movie m using(mid)
+                    where m.mid=#{mId} and s.sid=#{sId}
+    </select>
+
+    <insert id="saveTickets" parameterType="java.util.List" useGeneratedKeys="true" keyColumn="tkId" keyProperty="tkId">
+        insert into ticket values
+        <foreach collection="list" item="item" separator="," index="index">
+            (null,#{item.sId},#{item.mId},#{item.uId},#{item.tkSeat},now())
+        </foreach>
+    </insert>
+
+    <delete id="deleteTicket" parameterType="java.lang.Integer">
+        delete from ticket where tkid=#{tkId}
+    </delete>
+</mapper>
